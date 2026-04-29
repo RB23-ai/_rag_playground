@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Data & Temporary
+data/*.pdf
+.DS_Store
