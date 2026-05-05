@@ -5,7 +5,7 @@ from src.retriever import Retriever
 from src.generator import Generator
 
 # 1. Setup
-print("🚀 Initializing RAG Pipeline...")
+print(" Initializing RAG Pipeline...")
 ingestor = PDFIngestor()
 chunker = DocumentChunker()
 embedder = Embedder()
@@ -15,7 +15,9 @@ generator = Generator()
 raw_docs = ingestor.load_pdfs()
 chunks = chunker.run(raw_docs, strategy="recursive")
 embedded_chunks = embedder.embed_chunks(chunks)
-retriever = Retriever(embedded_chunks)
+
+# This will now print the BM25 and Cross-Encoder loading messages
+retriever = Retriever(embedded_chunks) 
 
 # 3. Test Queries
 queries = [
@@ -28,11 +30,20 @@ queries = [
 
 print("\n--- STARTING TEST QUERIES ---")
 for q in queries:
-    print(f"\n❓ QUERY: {q}")
-    # Retrieve
+    print(f"\n QUERY: {q}")
+    
+    # Embed the query
     query_vec = embedder.embed_query(q)
-    relevant_chunks = retriever.search(query_vec, top_k=3)
+    
+    # Retrieve using the advanced Re-ranking method!
+    # It fetches the top 20 candidates fast, then re-ranks to the top 3
+    relevant_chunks = retriever.search_with_reranking(
+        query_text=q, 
+        query_vector=query_vec, 
+        final_k=3, 
+        initial_k=20
+    )
     
     # Generate
     answer = generator.generate(q, relevant_chunks)
-    print(f"💡 ANSWER: {answer}")
+    print(f" ANSWER: {answer}")
