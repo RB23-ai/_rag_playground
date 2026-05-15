@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  rag-playground:
+    build: .
+    container_name: rag_container
+    # VOLUME MAPPING: 
+    # Connects your local 'data' folder to the container's 'data' folder.
+    # Any PDF you add to your Windows folder appears instantly in Docker.
+    volumes:
+      - ./data:/app/data
+    #  ENVIRONMENT INJECTION:
+    # Passes your .env keys safely into the container.
+    env_file:
+      - .env
